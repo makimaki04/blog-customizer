@@ -40,7 +40,7 @@ export const ArticleParamsForm = (prop: ArticleParamsFormProps) => {
 	};
 
 	const toggleButton = () => {
-		setIsMenuOpen(!isMenuOpen);
+		closeMenu();
 	};
 
 	const setDeafault = () => {
