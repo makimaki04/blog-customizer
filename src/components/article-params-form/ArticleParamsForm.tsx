@@ -5,7 +5,7 @@ import styles from './ArticleParamsForm.module.scss';
 import arrowStyles from '../arrow-button/ArrowButton.module.scss';
 import clsx from 'clsx';
 
-import { useEffect, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Select } from '../select';
 import {
 	ArticleStateType,
@@ -20,27 +20,33 @@ import {
 import { Separator } from '../separator';
 import { RadioGroup } from '../radio-group';
 import { useLocalStorage } from 'src/hooks/useLocalStorage';
+import { Text } from '../text';
+import { useClose } from 'src/hooks/useClose';
 
 export type ArticleParamsFormProps = {
 	onApply: (setState: ArticleStateType) => void;
 };
 
 export const ArticleParamsForm = (prop: ArticleParamsFormProps) => {
-	const [isOpen, setIsOpen] = useState<boolean>(false);
+	const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
 	const [formState, setFormState] = useLocalStorage<ArticleStateType>(
 		'formState',
 		defaultArticleState
 	);
-
 	const asideRef = useRef<HTMLElement>(null);
 
+	const closeMenu = () => {
+		setIsMenuOpen(false);
+	};
+
 	const toggleButton = () => {
-		setIsOpen(!isOpen);
+		setIsMenuOpen(!isMenuOpen);
 	};
 
 	const setDeafault = () => {
 		prop.onApply(defaultArticleState);
 		setFormState(defaultArticleState);
+		closeMenu();
 	};
 
 	const setFontFamily = (selected: OptionType) => {
@@ -63,13 +69,21 @@ export const ArticleParamsForm = (prop: ArticleParamsFormProps) => {
 		setFormState({ ...formState, fontSizeOption: selected });
 	};
 
-	const onSubmit = (e: React.MouseEvent<HTMLButtonElement>) => {
+	const onSubmit = (e: FormEvent) => {
 		e.preventDefault();
 		prop.onApply(formState);
-		setIsOpen(false);
+		closeMenu();
 	};
 
+	useClose({
+		isOpen: isMenuOpen,
+		onClose: closeMenu,
+		rootRef: asideRef,
+	});
+
 	useEffect(() => {
+		if (!isMenuOpen) return;
+
 		const handleOutsideClick = (e: MouseEvent) => {
 			const target = e.target as HTMLElement;
 			const isArrow =
@@ -78,7 +92,7 @@ export const ArticleParamsForm = (prop: ArticleParamsFormProps) => {
 			const isInsideAside = asideRef.current?.contains(target);
 
 			if (!isArrow && !isInsideAside) {
-				setIsOpen(false);
+				closeMenu();
 			}
 		};
 
@@ -91,12 +105,16 @@ export const ArticleParamsForm = (prop: ArticleParamsFormProps) => {
 
 	return (
 		<>
-			<ArrowButton onClick={toggleButton} isOpen={isOpen} />
+			<ArrowButton onClick={toggleButton} isMenuOpen={isMenuOpen} />
 			<aside
 				ref={asideRef}
-				className={clsx(styles.container, { [styles.container_open]: isOpen })}>
-				<form className={styles.form}>
-					<h2>Задайте параметры</h2>
+				className={clsx(styles.container, {
+					[styles.container_open]: isMenuOpen,
+				})}>
+				<form className={styles.form} onSubmit={onSubmit}>
+					<Text as='h2' size={31} weight={800} uppercase>
+						Задайте параметры
+					</Text>
 					<Select
 						options={fontFamilyOptions}
 						selected={formState.fontFamilyOption}
@@ -126,7 +144,7 @@ export const ArticleParamsForm = (prop: ArticleParamsFormProps) => {
 						title={'ширина контента'}></Select>
 					<div className={styles.bottomContainer}>
 						<Button title='Сбросить' onClick={setDeafault} type='reset' />
-						<Button title='Применить' onClick={onSubmit} type='submit' />
+						<Button title='Применить' type='submit' />
 					</div>
 				</form>
 			</aside>

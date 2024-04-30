@@ -17,7 +17,7 @@ export const App = () => {
 	);
 
 	return (
-		<div
+		<main
 			className={styles.main}
 			style={
 				{
@@ -30,6 +30,6 @@ export const App = () => {
 			}>
 			<ArticleParamsForm onApply={setAppState} />
 			<Article />
-		</div>
+		</main>
 	);
 };
