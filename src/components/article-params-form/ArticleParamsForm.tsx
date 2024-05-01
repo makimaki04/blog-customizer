@@ -2,10 +2,9 @@ import { ArrowButton } from 'components/arrow-button';
 import { Button } from 'components/button';
 
 import styles from './ArticleParamsForm.module.scss';
-import arrowStyles from '../arrow-button/ArrowButton.module.scss';
 import clsx from 'clsx';
 
-import { FormEvent, useEffect, useRef, useState } from 'react';
+import { FormEvent, useRef, useState } from 'react';
 import { Select } from '../select';
 import {
 	ArticleStateType,
@@ -40,7 +39,7 @@ export const ArticleParamsForm = (prop: ArticleParamsFormProps) => {
 	};
 
 	const toggleButton = () => {
-		closeMenu();
+		setIsMenuOpen((prev) => !prev);
 	};
 
 	const setDeafault = () => {
@@ -80,28 +79,6 @@ export const ArticleParamsForm = (prop: ArticleParamsFormProps) => {
 		onClose: closeMenu,
 		rootRef: asideRef,
 	});
-
-	useEffect(() => {
-		if (!isMenuOpen) return;
-
-		const handleOutsideClick = (e: MouseEvent) => {
-			const target = e.target as HTMLElement;
-			const isArrow =
-				target.classList.contains(`${arrowStyles.container}`) &&
-				target.classList.contains(`${arrowStyles.arrow}`);
-			const isInsideAside = asideRef.current?.contains(target);
-
-			if (!isArrow && !isInsideAside) {
-				closeMenu();
-			}
-		};
-
-		document.addEventListener('mousedown', handleOutsideClick);
-
-		return () => {
-			document.removeEventListener('mousedown', handleOutsideClick);
-		};
-	}, []);
 
 	return (
 		<>

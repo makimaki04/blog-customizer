@@ -25,7 +25,9 @@ export const ArrowButton = (prop: ArrowButtonProps) => {
 			<img
 				src={arrow}
 				alt='иконка стрелочки'
-				className={clsx({ [styles.arrow_open]: prop.isMenuOpen })}
+				className={clsx(styles.arrow, {
+					[styles.arrow_open]: prop.isMenuOpen,
+				})}
 			/>
 		</div>
 	);
