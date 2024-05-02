@@ -13,7 +13,12 @@ export const ArrowButtonStory: Story = {
 	render: () => {
 		return (
 			<>
-				<ArrowButton />
+				<ArrowButton
+					isMenuOpen={true}
+					onClick={() => {
+						console.log('click');
+					}}
+				/>
 			</>
 		);
 	},
